@@ -48,6 +48,8 @@ Metar.h
 MeteoTable.h
 MeteoTableWidget.h
 MeteotableOptionsDialog.h
+POI_Panel.h
+POI_TableWidget.h
 RegularGridded.h
 SkewT.h
 Stylesheet.h
@@ -97,6 +99,8 @@ Metar.cpp
 MeteoTable.cpp
 MeteoTableWidget.cpp
 MeteotableOptionsDialog.cpp
+POI_Panel.cpp
+POI_TableWidget.cpp
 SkewT.cpp
 SkewTWindow.cpp
 Terrain.cpp
