@@ -124,7 +124,9 @@ void POI_Editor::btOkClicked()
 	
 	if (modeCreation) {
 		poi->show();
-	}
+
+        emit SIGNAL(signalPOICreated(poi));
+    }
 	delete this;	
 }
 //---------------------------------------
@@ -147,6 +149,9 @@ void POI_Editor::btDeleteClicked()
 		if (rep == QMessageBox::Yes)
 		{
 			Settings::deleteSettingsPOI(poi->getCode());
+
+            emit SIGNAL(signalPOIDeleted(poi));
+
 			delete poi;
 			delete this;
 		}

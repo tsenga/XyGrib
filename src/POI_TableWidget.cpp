@@ -1,28 +1,11 @@
 #include "POI_TableWidget.h"
-#include "MeteoTableWidget.h"
 
 POI_TableWidget::POI_TableWidget(QWidget* parent,
                                  GriddedPlotter *plotter,
                                  QList<POI*> listPOI)
-    : QWidget(parent)
+    : MeteoWidget(plotter, parent)
 {
-    this->parent = parent;
-    this->plotter = plotter;
     this->listPOI = listPOI;
-
-    this->layout = new QGridLayout(this);
-    assert(layout);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
-
-    headerWidget = new QWidget();
-    assert(headerWidget);
-
-    headerLayout = new QGridLayout(headerWidget);
-    assert(headerLayout);
-
-    headerLayout->setContentsMargins(0,0,0,0);
-    headerLayout->setSpacing(0);
 
     createTable();
 }
@@ -47,12 +30,7 @@ void POI_TableWidget::createTable()
     col = 0;
     lig = 0;
 
-    //addCell_title_dataline("", true, 0 /* lig */, col);
-
-    if (showSunMoonAlmanac) {
-        //addCell_SunMoonAlmanac(daterecord, lat, lon, layout, 1 /* lig */, col, 1, colspan);
-        lig++;
-    }
+    addCell_title_dataline("", true, 0 /* lig */, col);
 
     col ++;
     QString curr = "";
@@ -74,11 +52,7 @@ void POI_TableWidget::createTable()
 
             // set title, incorporating number of intra-day buckets
 
-            //addCell_title(curr, true, layout, 0 /* lig */, col, 1, colspan);
-
-            if (showSunMoonAlmanac) {
-                //addCell_SunMoonAlmanac (daterecord, lat, lon, layout, 1 /* lig */,col, 1,colspan);
-            }
+            addCell_title(curr, true, layout, 0 /* lig */, col, 1, colspan);
 
             col += colspan; // get start column for next date ready
         }
@@ -91,23 +65,77 @@ void POI_TableWidget::createTable()
     col = 0;
     lig++;
 
-    // addCell_title_dataline("", true, lig, col);
+    addCell_title_dataline("", true, lig, col);
 
     col++;
-
 
     for (iter=sdates.begin(); iter!=sdates.end(); iter++) {
         time_t date = *iter;
 
-        // addCell_title(Util::formatTime(date), false, layout, lig, col, 1, 1, dateEpoch==date);
+        addCell_title(Util::formatTime(date), false, layout, lig, col, 1, 1, dateEpoch==date);
+
         col++;
 
-        // Grib data for this point and this date
-        //pinfo = new DataPointInfo(reader, lon, lat, date);
-        //lspinfos.push_back(pinfo);
-        //lsdates.push_back(date);
+        lsdates.push_back(date); // record date details to iterate through later
     }
 
     // content...
+
+    DataCode windDTC(GRB_PRV_WIND_XY2D,LV_ABOV_GND,10);
+
+    QList<POI*>::iterator it;
+
+    for (it=listPOI.begin(); it != listPOI.end(); it++) {
+        POI *poi = *it;
+
+        lig++;
+
+        addLine_Wind(windDTC.getAltitude(), poi->getLongitude(), poi->getLatitude(), lig);
+    }
+}
+//-----------------------------------------------------------------
+void POI_TableWidget::addLine_Wind (const Altitude &alt, double lon, double lat, int lig)
+{
+    std::vector <time_t>::iterator iter;
+    QColor    bgColor = Qt::white;
+    QString   txt;
+    int col = 0;
+    addCell_title_dataline (tr("Wind")+" ("+AltitudeStr::toStringShort(alt)+")",
+                    layout, lig,col);
+    col ++;
+    for (iter=lsdates.begin(); iter!=lsdates.end(); iter++, col++) {
+        time_t curr_time = *iter;
+
+        DataPointInfo pf(reader, lon, lat, curr_time);
+
+        float v, dir;
+        txt = "";
+        bgColor = Qt::white;
+        if (pf.getWindValues (alt, &v, &dir)) {
+            if (dir != GRIB_NOTDEF) {
+                QString tmp;
+                tmp.sprintf("%.0f", dir);
+                txt += tmp + tr(" °") + "\n";
+                txt += Util::formatSpeed_Wind(v);
+                if ( Util::getSetting("MTABLE_showWindBeauforts", true).toBool() ) {
+                    tmp.sprintf("%2d", Util::msToBeaufort(v));
+                    txt += "\n";
+                    txt += tmp + tr(" Bf");
+                }
+                bgColor = QColor(plotter->getWindColor(v, true));
+            }
+        }
+        float vx, vy;
+        pf.getWindVxVy (alt, &vx, &vy);
+        addCell_content (txt, layout,(lat<0),lig,col, 1,1, bgColor, MTABLE_WIND_CELL,vx,vy);
+    }
 }
 
+void POI_TableWidget::refresh()
+{
+}
+
+void POI_TableWidget::refresh(GriddedPlotter *plotter)
+{
+    this->plotter = plotter;
+}

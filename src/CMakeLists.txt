@@ -46,6 +46,7 @@ MapDrawer.h
 MenuBar.h
 Metar.h
 MeteoTable.h
+MeteoWidget.h
 MeteoTableWidget.h
 MeteotableOptionsDialog.h
 POI_Panel.h
@@ -97,6 +98,7 @@ MapDrawer.cpp
 MenuBar.cpp
 Metar.cpp
 MeteoTable.cpp
+MeteoWidget.cpp
 MeteoTableWidget.cpp
 MeteotableOptionsDialog.cpp
 POI_Panel.cpp

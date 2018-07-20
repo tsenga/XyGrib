@@ -1,36 +1,30 @@
 #ifndef POI_TABLEWIDGET_H
 #define POI_TABLEWIDGET_H
 
-#include <QWidget>
-#include <QGridLayout>
-
-#include "GriddedPlotter.h"
-#include "GriddedReader.h"
-
+#include "MeteoWidget.h"
 #include "POI.h"
 
-class POI_TableWidget : public QWidget
+class POI_TableWidget : public MeteoWidget
 {
     Q_OBJECT
 public:
     explicit POI_TableWidget(QWidget *parent,
                              GriddedPlotter* plotter,
                              QList<POI*> listPOI);
+    void refresh();
+    void refresh(GriddedPlotter* plotter);
 
 signals:
 
 public slots:
 
 private:
-        QWidget*        parent;
-        QGridLayout*    layout;
-        QGridLayout*    headerLayout;
-        GriddedPlotter* plotter;
-        GriddedReader*  reader;
-        QList<POI*>     listPOI;
-        QWidget*        headerWidget;
+        QList<POI*>         listPOI;
+        std::vector<time_t> lsdates;
 
         void createTable();
+
+        void addLine_Wind(const Altitude &alt, double lon, double lat, int lig);
 };
 
 #endif // POI_TABLEWIDGET_H

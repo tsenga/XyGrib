@@ -954,7 +954,10 @@ void MainWindow::slotCreatePOI ()
 {
 	double lon, lat;
 	proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-	new POI_Editor (Settings::getNewCodePOI(), lon, lat, proj, this, terre);
+    POI_Editor* poi_e = new POI_Editor (Settings::getNewCodePOI(), lon, lat, proj, this, terre);
+
+    connect(poi_e, SIGNAL(signalPOICreated(POI*)), poiPanel, SLOT(slotPOICreated(POI*)) );
+    connect(poi_e, SIGNAL(signalPOIDeleted(POI*)), poiPanel, SLOT(slotPOIDeleted(POI*)));
 }
 //-------------------------------------------------
 void MainWindow::createPOIs ()
@@ -967,6 +970,8 @@ void MainWindow::createPOIs ()
  		poi = new POI (code, proj, this, terre);
 		connectPOI (poi);
  	}
+
+    poiPanel->refresh(terre->getGriddedPlotter());
 }
 //-------------------------------------------------
 void MainWindow::connectPOI (POI *poi)

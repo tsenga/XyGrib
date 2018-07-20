@@ -10,17 +10,24 @@
 
 #include "GriddedPlotter.h"
 
+#include "POI_TableWidget.h"
+
 class POI_Panel : public QDockWidget
 { Q_OBJECT
 public:
-    POI_Panel(QWidget *parent, GriddedPlotter *plotter);
+    POI_Panel(QWidget *parent);
+
+    void refresh(GriddedPlotter* plotter);
+
+public slots:
+    void slotPOICreated(POI*);
+    void slotPOIDeleted(POI*);
 
 private:
-    GriddedPlotter* plotter;
-    QWidget*        dataTable;
-    QWidget*        createDataTable();
-    QVBoxLayout*    mainLayout;
-    QScrollArea*    hdrScroll;
+    POI_TableWidget*    dataTable;
+    POI_TableWidget*    createDataTable();
+    QVBoxLayout*        mainLayout;
+    QScrollArea*        hdrScroll;
 
 };
 

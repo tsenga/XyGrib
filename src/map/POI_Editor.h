@@ -61,6 +61,10 @@ Q_OBJECT
 		void closeEvent(QCloseEvent *) {delete this;};
 		void updateInterface();
 	
+    signals:
+        void signalPOICreated(POI*);
+        void signalPOIDeleted(POI*);
+
 	private slots:
 		void reject();
 		
