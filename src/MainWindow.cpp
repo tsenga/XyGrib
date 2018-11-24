@@ -970,47 +970,10 @@ void MainWindow::slotCreatePOI ()
 {
 	double lon, lat;
 	proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-<<<<<<< HEAD
     POI_Editor* poi_e = new POI_Editor (poiManager, Settings::getNewCodePOI(), lon, lat, proj, this, terre);
 
     connect(poi_e, SIGNAL(signalPOICreated(POI*)), poiManager, SLOT(addPOI(POI*)));
     connect(poi_e, SIGNAL(signalPOIChanged(POI*)), poiManager, SLOT(poiChanged(POI*)));
-    connect(poi_e, SIGNAL(signalPOIDeleted(POI*)), poiManager, SLOT(removePOI(POI*)));
-=======
-    POI_Editor* poi_e = new POI_Editor (Settings::getNewCodePOI(), lon, lat, proj, this, terre);
-
-    connect(poi_e, SIGNAL(signalPOICreated(POI*)), poiPanel, SLOT(slotPOICreated(POI*)) );
-    connect(poi_e, SIGNAL(signalPOIDeleted(POI*)), poiPanel, SLOT(slotPOIDeleted(POI*)));
-}
-//-------------------------------------------------
-void MainWindow::createPOIs ()
-{
-	POI *poi;
-    QList<uint> lscodes = Settings::getSettingAllCodesPOIs();
-	for (int i=0; i < lscodes.size(); ++i)
-	{
-		uint code = lscodes.at(i);
- 		poi = new POI (code, proj, this, terre);
-		connectPOI (poi);
- 	}
-
-    poiPanel->refresh(terre->getGriddedPlotter());
-}
-//-------------------------------------------------
-void MainWindow::connectPOI (POI *poi)
-{
-	bool visible = Util::getSetting("showPOIs", true).toBool();
-	if (poi!=NULL) {
-		if (poi->isValid()) {
-			poi->setVisible (visible);
-		}
-		else {
-			Settings::deleteSettingsPOI (poi->getCode() );
-			delete poi;
-			poi = NULL;
-		}
-	}
->>>>>>> b53e3ef3f91713e1400b2019df214daf1a0c4c6a
 }
 //-------------------------------------------------
 void MainWindow::slotOpenSelectMetar ()

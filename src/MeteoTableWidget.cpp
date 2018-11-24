@@ -42,7 +42,6 @@ MeteoTableWidget::~MeteoTableWidget()
 	Util::cleanVectorPointers (lspinfos);
 	qDeleteAll (listVisibleData);
 }
-<<<<<<< HEAD
 //----------------------------------------------------------------
 void MeteoTableWidget::addCell_SunMoonAlmanac (time_t t, double lat, double lon, 
 				QGridLayout *layout,int lig,int col, int rowspan,int colspan)
@@ -75,8 +74,6 @@ bool MeteoTableWidget::showCurrentArrows()
 {
     return Util::getSetting("MTABLE_showCurrentArrows", true).toBool();
 }
-=======
->>>>>>> b53e3ef3f91713e1400b2019df214daf1a0c4c6a
 
 //-------------------------------------------------------------------------------
 void MeteoTableWidget::createTable() 
