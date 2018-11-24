@@ -390,6 +390,8 @@ MenuBar::MenuBar (QWidget *parent)
         acOptions_Proxy = addAction (menuOptions, tr("Internet parameters"),"","","");
         acView_ShowBoardPanel = addActionCheck (menuOptions, tr("Show values panel"),
 					tr("Ctrl+V"), tr("Show values panel"));
+        acView_ShowPOIPanel = addActionCheck (menuOptions, tr("Show point of interest panel"),
+                                              tr("Ctrl+P"), tr("Show point of interest panel"));
         acOptions_AngleConverter = addAction (menuOptions,
         				tr("Angle converter"), "", "","");
         acOptions_DateChooser = addActionCheck (menuOptions, 

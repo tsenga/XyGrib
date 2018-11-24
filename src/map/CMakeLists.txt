@@ -2,6 +2,7 @@ set(MAP_HDRS
 GisReader.h
 GshhsRangsReader.h
 GshhsReader.h
+POI_Manager.h
 POI.h
 POI_Editor.h
 PositionEditor.h
@@ -12,6 +13,7 @@ set(MAP_SRCS
 GisReader.cpp
 GshhsRangsReader.cpp
 GshhsReader.cpp
+POI_Manager.cpp
 POI.cpp
 POI_Editor.cpp
 PositionEditor.cpp

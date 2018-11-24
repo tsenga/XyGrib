@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MeteoTableWidget::MeteoTableWidget 
 			(GriddedPlotter *plotter, 
 			 double lon, double lat, QString locationName, QWidget *parent)
-	: QWidget(parent)
+    : MeteoWidget(parent, plotter)
 {
 	this->plotter = plotter;
 	this->parent = parent;
@@ -110,6 +110,15 @@ void MeteoTableWidget::addCell_SunMoonAlmanac (time_t t, double lat, double lon,
 	cell->label->setText (txt);
 	layout->setAlignment (Qt::AlignLeft);
 	layout->addWidget (cell, lig,col, rowspan,colspan );
+//-------------------------------------------------------------------------------
+bool MeteoTableWidget::showWindArrows()
+{
+    return Util::getSetting("MTABLE_showWindArrows", true).toBool();
+}
+//-------------------------------------------------------------------------------
+bool MeteoTableWidget::showCurrentArrows()
+{
+    return Util::getSetting("MTABLE_showCurrentArrows", true).toBool();
 }
 
 //-------------------------------------------------------------------------------

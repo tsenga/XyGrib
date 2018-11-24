@@ -91,6 +91,10 @@ void MainWindow::InitActionsStatus ()
 		boardPanel->setVisible (Util::getSetting("showBoardPanel", true).toBool());
 		menuBar->acView_ShowBoardPanel->setChecked (Util::getSetting("showBoardPanel", true).toBool());
 	}
+    if (poiPanel) {
+        poiPanel->setVisible (Util::getSetting("showPOIPanel", true).toBool());
+        menuBar->acView_ShowPOIPanel->setChecked (Util::getSetting("showPOIPanel", true).toBool());
+    }
 
 	strdtc = DataCodeStr::serialize (DataCode(GRB_GEOPOT_HGT,LV_ISOBARIC,925));
     strdtc = Util::getSetting("geopotentialLinesData", strdtc).toString();
@@ -301,8 +305,8 @@ mb->acMap_FindCity->setVisible(false);	// TODO
             this,  SLOT(slotOpenSelectMetar()));
 	connect(mb->acMap_ShowMETARs, SIGNAL(triggered(bool)),
 			this, SLOT(slotMETARSvisibility(bool)));
-mb->acMap_ShowMETARs->setVisible (false);	// TODO
-mb->acMap_SelectMETARs->setVisible (false);	// TODO
+//mb->acMap_ShowMETARs->setVisible (false);	// TODO
+//mb->acMap_SelectMETARs->setVisible (false);	// TODO
 	//-------------------------------------------------------
 	connect(mb->acView_GroupColorMap, SIGNAL(triggered(QAction *)),
 			this, SLOT(slot_GroupColorMap(QAction *)));
@@ -328,6 +332,8 @@ mb->acMap_SelectMETARs->setVisible (false);	// TODO
             this,  SLOT(slotShowColorScale(bool)));
     connect(mb->acView_ShowBoardPanel, SIGNAL(triggered(bool)),
             this,  SLOT(slotShowBoardPanel(bool)));
+    connect(mb->acView_ShowPOIPanel, SIGNAL(triggered(bool)),
+            this,  SLOT(slotShowPOIPanel(bool)));
 
     connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
             terre,  SLOT(setDrawWindArrows(bool)));
@@ -516,6 +522,9 @@ MainWindow::MainWindow (int w, int h, QWidget *parent)
 	assert (statusBar);
     statusBar->setFont (Font::getFont(FONT_StatusBar));
 
+    this->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    //this->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+
     boardPanel = new BoardPanel (this);
 	assert (boardPanel);
     this->addDockWidget (Qt::LeftDockWidgetArea, boardPanel);
@@ -533,6 +542,12 @@ MainWindow::MainWindow (int w, int h, QWidget *parent)
     //---------------------------------------------------------
     menuPopupBtRight = menuBar->createPopupBtRight(this);
 
+    poiManager = new POI_Manager();
+
+    poiPanel = new POI_Panel(poiManager, this);
+    assert(poiPanel);
+    this->addDockWidget(Qt::BottomDockWidgetArea, poiPanel);
+
     //---------------------------------------------------------
 	// Active les actions
     //---------------------------------------------------------
@@ -548,8 +563,7 @@ MainWindow::MainWindow (int w, int h, QWidget *parent)
     //---------------------------------------------------------
     // Initialisation des POI's
     //---------------------------------------------------------
-	createPOIs ();
-
+    poiManager->createPOIs(proj, this, terre);
     //--------------------------------------------------
 	resize (Util::getSetting("mainWindowSize", QSize(w,h)).toSize());
 	move   (Util::getSetting("mainWindowPos", QPoint()).toPoint());
@@ -854,6 +868,8 @@ void MainWindow::openMeteoDataFile (QString fileName)
 		dateChooser->setVisible (Util::getSetting("showDateChooser", true).toBool());
 		//-----------------------------------------------
 		updateGriddedData ();
+
+        poiPanel->setPlotter(plotter);
 	}
 	//------------------------------------------------
 	else  
@@ -954,34 +970,11 @@ void MainWindow::slotCreatePOI ()
 {
 	double lon, lat;
 	proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
-	new POI_Editor (Settings::getNewCodePOI(), lon, lat, proj, this, terre);
-}
-//-------------------------------------------------
-void MainWindow::createPOIs ()
-{
-	POI *poi;
-    QList<uint> lscodes = Settings::getSettingAllCodesPOIs();
-	for (int i=0; i < lscodes.size(); ++i)
-	{
-		uint code = lscodes.at(i);
- 		poi = new POI (code, proj, this, terre);
-		connectPOI (poi);
- 	}
-}
-//-------------------------------------------------
-void MainWindow::connectPOI (POI *poi)
-{
-	bool visible = Util::getSetting("showPOIs", true).toBool();
-	if (poi!=NULL) {
-		if (poi->isValid()) {
-			poi->setVisible (visible);
-		}
-		else {
-			Settings::deleteSettingsPOI (poi->getCode() );
-			delete poi;
-			poi = NULL;
-		}
-	}
+    POI_Editor* poi_e = new POI_Editor (poiManager, Settings::getNewCodePOI(), lon, lat, proj, this, terre);
+
+    connect(poi_e, SIGNAL(signalPOICreated(POI*)), poiManager, SLOT(addPOI(POI*)));
+    connect(poi_e, SIGNAL(signalPOIChanged(POI*)), poiManager, SLOT(poiChanged(POI*)));
+    connect(poi_e, SIGNAL(signalPOIDeleted(POI*)), poiManager, SLOT(removePOI(POI*)));
 }
 //-------------------------------------------------
 void MainWindow::slotOpenSelectMetar ()
@@ -1646,6 +1639,14 @@ void MainWindow::slotShowBoardPanel (bool b)
 	}
 }
 //-------------------------------------------------
+void MainWindow::slotShowPOIPanel (bool b)
+{
+    if (poiPanel) {
+        poiPanel->setVisible(b);
+        Util::setSetting ("showPOIPanel", b);
+    }
+}
+//-------------------------------------------------
 void MainWindow::slotWindArrows(bool b)
 {
     // pas de barbules sans flèches
@@ -1698,8 +1699,9 @@ void MainWindow::slotMouseClicked(QMouseEvent * e)
 			// added by Tim Holtschneider, 05.2010
 			// Unmark selected POIs
 			if( e->modifiers() == Qt::ShiftModifier ) {
-				POI::restoreBgOfSelectedPOIs();
-				GLOB_listSelectedPOI.clear();
+                poiManager->unselectAll();
+                //POI::restoreBgOfSelectedPOIs();
+                //GLOB_listSelectedPOI.clear();
 			}
             break;
         }

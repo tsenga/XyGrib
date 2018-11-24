@@ -33,12 +33,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Stylesheet.h"
 
+#include <iostream>
+
 //===========================================================
 int main (int argc, char *argv[])
 {
     QApplication app(argc, argv);
 	qsrand(QTime::currentTime().msec());
-
 
 #ifdef Q_OS_MACX
     if ( QSysInfo::MacintoshVersion > QSysInfo::MV_10_8 )

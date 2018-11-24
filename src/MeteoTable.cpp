@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Settings.h"
 #include "DataQString.h"
 
+extern QString meteoTableStyleSheetDef; // # Stylesheet.h
+
 //------------------------------------------------------------------------
 QWidget *MeteoTableDialog::createDataTable ()
 {
@@ -110,8 +112,9 @@ MeteoTableDialog::MeteoTableDialog (
 	optionsDialog = NULL;
 	dataTable = NULL;
     this->setObjectName("mtd");
+
     if (Util::getSetting("showDarkSkin", true).toBool())
-        this->setStyleSheet(mtStyleSheet);
+        this->setStyleSheet(meteoTableStyleSheetDef);
     
     if (!plotter || !plotter->isReaderOk()) {
         QMessageBox::critical (this,

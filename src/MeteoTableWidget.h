@@ -169,7 +169,10 @@ class MeteoTableWidget : public QWidget
 		std::vector <DataPointInfo *> & getListPinfos() 
 									{ return lspinfos; }
 
-		QWidget *getDataHeaders (); 
+    protected:
+        virtual bool showWindArrows();
+        virtual bool showCurrentArrows();
+
 		
 	private:
         double          lon, lat;

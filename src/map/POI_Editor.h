@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Projection.h"
 #include "POI.h"
+#include "POI_Manager.h"
 #include "Util.h"
 
 #include "ui_PoiEditorDialog.h"
@@ -46,28 +47,33 @@ Q_OBJECT
     public:
     
     	// Constructor for edit an existing POI
-        POI_Editor(POI *poi, QWidget *parent);
+        POI_Editor(POI_Manager *poiManager_, POI *poi_, QWidget *parent);
         
         // Constructor for edit and create a new POI
-        POI_Editor(uint code, double lon, double lat,
+        POI_Editor(POI_Manager *poiManager_, uint code, double lon, double lat,
         			Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow);
         
         ~POI_Editor();
-    
+
     private:
-    	POI   *poi;
-    	bool  modeCreation;
+        POI_Manager  *poiManager;
+        POI         *poi;
+        bool        modeCreation;
 		
 		void closeEvent(QCloseEvent *) {delete this;};
 		void updateInterface();
 	
+    signals:
+        void signalPOICreated(POI*);
+        void signalPOIDeleted(POI*);
+        void signalPOIChanged(POI*);
+
 	private slots:
 		void reject();
 		
 		void btOkClicked();
 		void btCancelClicked();
 		void btDeleteClicked();
-
 };
 
 

@@ -30,15 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------
 // added by Tim Holtschneider, 05.2010
 // list storing selected POIs
-QList<POI*> GLOB_listSelectedPOI;
+//QList<POI*> GLOB_listSelectedPOI;
 
 //-------------------------------------------------------------------------------
 // Read from old settings format (version <= 3.3.0)
 //-------------------------------------------------------------------------------
-POI::POI (QString seralizedPOI_oldFormat)//
+POI::POI (POI_Manager *poiManager_, QString seralizedPOI_oldFormat)//
 				 // Projection *proj, QWidget *ownerSlotsPOI, QWidget *parentWindow)
 	: QWidget(NULL)
 {
+    this->poiManager = poiManager_;
+
 	valid = true;
 	isMovable = false;
 	showLabel = true;
@@ -63,10 +65,12 @@ POI::POI (QString seralizedPOI_oldFormat)//
 }
 
 //-------------------------------------------------------------------------------
-POI::POI(uint code, QString name, double lon, double lat,
+POI::POI(POI_Manager *poiManager_, uint code, QString name, double lon, double lat,
 				 Projection *proj, QWidget *ownerSlotsPOI, QWidget *parentWindow)
 	: QWidget(parentWindow)
 {
+    this->poiManager = poiManager_;
+
 	valid = true;
 	isMovable = false;
 	showLabel = true;
@@ -86,6 +90,8 @@ POI::POI(uint code, QString name, double lon, double lat,
 // Read POI's params from native settings file
 POI::POI (uint codeFromOldSettings)
 {
+    this->poiManager = NULL;
+
 	valid = true;
 	code = codeFromOldSettings;
 	this->parent = NULL;
@@ -95,10 +101,12 @@ POI::POI (uint codeFromOldSettings)
 
 //-------------------------------------------------------------------------------
 // Read POI's params from current (.ini) settings file
-POI::POI (uint code,
+POI::POI (POI_Manager *poiManager_, uint code,
 			Projection *proj, QWidget *ownerSlotsPOI, QWidget *parentWindow)
 	: QWidget(parentWindow)
 {
+    this->poiManager = poiManager_;
+
 	valid = true;
 	this->code = code;
 	this->parent = parentWindow;
@@ -349,9 +357,11 @@ void  POI::mousePressEvent(QMouseEvent *e)
 		yMouse = e->y();
 	} else if (e->modifiers()==Qt::ShiftModifier) { 
 	// add POI to global list, TH20100514
-		GLOB_listSelectedPOI.append( this );
+    //	GLOB_listSelectedPOI.append( this );
 		this->labelBgColorMarkedPOI = this->labelBgColor;
 		this->labelBgColor = QColor(32, 32,0,127);
+
+        emit signalPOIselected(this);
 	}
 	else
 		moveInCourse = false;	
@@ -375,14 +385,14 @@ void  POI::mouseReleaseEvent(QMouseEvent *e)
 			if (countClick==2)
 			{
 				// Double Clic : Edit this Point Of Interest
-				new POI_Editor(this, parent);
+                new POI_Editor(poiManager, this, parent);
 				countClick = 0;
 			}
 		}
 		else if (e->button() == Qt::RightButton)
 		{
 			// Right clic : Edit this Point Of Interest
-			new POI_Editor(this, parent);
+            new POI_Editor(poiManager, this, parent);
 		}
 	}
 	else {
@@ -408,6 +418,12 @@ void  POI::timerClickEvent()
 }
 //-------------------------------------------------------------------------------
 // Restore background color for all selected POIs, TH20110103
+void POI::restoreBgColor()
+{
+    this->labelBgColor = labelBgColorMarkedPOI;
+    this->labelBgColorMarkedPOI = QColor(QColor::Invalid);
+}
+/*
 void POI::restoreBgOfSelectedPOIs()
 {
 	QList<POI*>::iterator iterPOI;
@@ -419,4 +435,4 @@ void POI::restoreBgOfSelectedPOIs()
 		}
 	}
 }
-
+*/

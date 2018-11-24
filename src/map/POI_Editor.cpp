@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <cassert>
+#include <iostream>
 
 #include <QTimer>
 #include <QMessageBox>
@@ -28,25 +29,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit and create a new POI
 //-------------------------------------------------------
-POI_Editor::POI_Editor(uint code, double lon, double lat,
+POI_Editor::POI_Editor(POI_Manager *poiManager_, uint code, double lon, double lat,
 				Projection *proj, QWidget *ownerMeteotable, QWidget *parentWindow)
 	: QDialog(parentWindow)
 {
+    assert(poiManager_);
+
 	setupUi(this);
 	modeCreation = true;
 	setWindowTitle(tr("New Point of interest"));
-	this->poi = new POI(code, tr("Point %1").arg(code), lon, lat, proj, ownerMeteotable, parentWindow);
+    this->poiManager = poiManager_;
+    this->poi = new POI(poiManager_, code, tr("Point %1").arg(code), lon, lat, proj, ownerMeteotable, parentWindow);
 	assert(this->poi);
 	updateInterface();
 }
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit an existing POI
 //-------------------------------------------------------
-POI_Editor::POI_Editor(POI *poi_, QWidget *parent)
+POI_Editor::POI_Editor(POI_Manager *poiManager_, POI *poi_, QWidget *parent)
 	: QDialog(parent)
 {
+    assert(poiManager_);
+
 	setupUi(this);
 	setModal(false);
+    this->poiManager = poiManager_;
 	this->poi = poi_;
 	modeCreation = false;
 	setWindowTitle(tr("Point of interest: ")+poi->getName());
@@ -86,6 +93,11 @@ void POI_Editor::updateInterface()
 	connect(btValid,  SIGNAL(clicked()), this, SLOT(btOkClicked()));
 	connect(btCancel, SIGNAL(clicked()), this, SLOT(btCancelClicked()));
 	connect(btDelete, SIGNAL(clicked()), this, SLOT(btDeleteClicked()));
+
+    connect(this, SIGNAL(signalPOIChanged(POI*)), poiManager, SLOT(poiChanged(POI*)));
+    connect(this, SIGNAL(signalPOICreated(POI*)), poiManager, SLOT(addPOI(POI*)));
+    connect(this, SIGNAL(signalPOIDeleted(POI*)), poiManager, SLOT(removePOI(POI*)));
+
 	setModal(false);
 	show();
 }
@@ -123,8 +135,21 @@ void POI_Editor::btOkClicked()
 	poi->writeSettings();	// save new pamameters to settings
 	
 	if (modeCreation) {
+        //poiManager->addPOI(poi);
+
 		poi->show();
-	}
+
+        std::cerr << "POI_Editor::btOKClicked (creation)" << std::endl;
+
+        emit signalPOICreated(poi);
+    } else {
+        //poiManager->poiChanged(poi);
+
+
+        std::cerr << "POI_Editor::btOKClicked (change)" << std::endl;
+
+        emit signalPOIChanged(poi);
+    }
 	delete this;	
 }
 //---------------------------------------
@@ -146,7 +171,13 @@ void POI_Editor::btDeleteClicked()
 
 		if (rep == QMessageBox::Yes)
 		{
-			Settings::deleteSettingsPOI(poi->getCode());
+			Settings::deleteSettingsPOI(poi->getCode());            
+
+            //poiManager->removePOI(poi);
+            emit signalPOIDeleted(poi);
+
+            std::cerr << "POI_Editor::btDeleteClicked" << std::endl;
+
 			delete poi;
 			delete this;
 		}

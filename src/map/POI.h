@@ -33,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Projection.h"
 
+#include "POI_Manager.h"
+
 //===================================================================
 class POI : public QWidget
 { Q_OBJECT
@@ -40,14 +42,14 @@ class POI : public QWidget
     	friend class POI_Editor;
 
 		// Create POI from old setting style (version<=3.3.0) : obsolete !
-        POI (QString seralizedPOI_oldFormat); //
+        POI (POI_Manager *poiManager_, QString seralizedPOI_oldFormat); //
         
         POI (uint code);    // read POI from old native settings
         
-        POI (uint code,     // read POI from .ini settings
+        POI (POI_Manager *poiManager_, uint code,     // read POI from .ini settings
 				Projection *proj, QWidget *ownerSlotsPOI, QWidget *parentWindow);
 
-        POI	(uint code, QString name, double lon, double lat,
+        POI	(POI_Manager *poiManager_, uint code, QString name, double lon, double lat,
         			Projection *proj, QWidget *ownerSlotsPOI, QWidget *parentWindow);
         
         void	writeSettings ();
@@ -71,8 +73,10 @@ class POI : public QWidget
 							    QFont  labelFont,
 								QColor textColor,
 								QColor bgColor     );
+
 		// Restore background color for all selected POIs, TH20110103
-		static void restoreBgOfSelectedPOIs( void );
+        void restoreBgColor();
+//		static void restoreBgOfSelectedPOIs( void );
 
 	public slots:
 		void projectionUpdated ();
@@ -81,6 +85,7 @@ class POI : public QWidget
 	signals:
 		void signalOpenMeteotablePOI (POI *poi);
 		void signalPOImoved (POI *poi);
+        void signalPOIselected (POI *poi);
     
     private:
         void	readSettings (uint code, bool fromNativeOldSettings);
@@ -93,7 +98,8 @@ class POI : public QWidget
 		int			 hpx, hpy;	 // Hot point offset in widget (pixels)
 		int			 xLabel;
 		
-		Projection   *proj;
+        POI_Manager *poiManager;
+        Projection   *proj;
     	QCursor   enterCursor;
 		QWidget   *parent;
 		
@@ -129,6 +135,6 @@ class POI : public QWidget
 //----------------------------------------------
 // added by Tim Holtschneider
 // list storing selected POIs
-extern QList<POI*> GLOB_listSelectedPOI;
+//extern QList<POI*> GLOB_listSelectedPOI;
 
 #endif

@@ -206,6 +206,7 @@ public:
     QAction *acView_GribGrid;
     QAction *acView_ShowColorScale;
     QAction *acView_ShowBoardPanel;
+    QAction *acView_ShowPOIPanel;
 	
     //------------------------------------------
     QActionGroup *acAlt_GroupAltitude;

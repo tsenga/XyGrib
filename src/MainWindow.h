@@ -37,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogProxy.h"
 #include "DialogUnits.h"
 #include "DialogSelectMetar.h"
+#include "POI_Manager.h"
+#include "POI_Panel.h"
 #include "POI.h"
 #include "GribAnimator.h"
 #include "Projection.h"
@@ -130,6 +132,7 @@ class MainWindow: public QMainWindow
 		void slotShowDateChooser (bool b);
 		void slotShowColorScale (bool b);
 		void slotShowBoardPanel (bool b);
+        void slotShowPOIPanel (bool b);
         void slotOptions_Language ();
         void slotHelp_Help ();
         void slotOpenAngleConverter ();
@@ -182,8 +185,9 @@ class MainWindow: public QMainWindow
         QMenu    *menuPopupBtRight;
         
         void    connectSignals();
-		void    createPOIs ();
-		void    connectPOI (POI *poi);
+
+        POI_Manager     *poiManager;
+        POI_Panel       *poiPanel;
 		
 		void    createAllMETARs ();
 		

@@ -170,7 +170,7 @@ void Settings::copyOldNativeSettingsToIniFile_POI ()
 	while (it.hasNext()) {
 		QString  key = it.next();
 		QString  serialized = natSettings.value(key).toString();
-		poi = new POI (serialized);	 // try to create POI with settings value
+        poi = new POI (NULL, serialized);	 // try to create POI with settings value
 		if (poi != NULL)
 		{
 			found = true;
@@ -193,7 +193,7 @@ void Settings::copyOldNativeSettingsToIniFile_POI ()
 			uint code = group.toUInt(&ok);
 			//printf("poi code: %d\n", code);
 			if (ok) {
-				poi = new POI (code);
+                poi = new POI (code);
 				if (poi!=NULL) {
 					if (poi->isValid()) {
 						//printf("poi valid\n");
