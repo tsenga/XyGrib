@@ -127,7 +127,11 @@ class TableCell_Wind : public TableCell
                                 double vx, double vy, bool south,
                                 GriddedPlotter  *plotter,
                                 QWidget *parent, QString txt, bool bold,
+<<<<<<< HEAD
                                 QColor bgcolor, bool showWindArrows
+=======
+                                QColor bgcolor
+>>>>>>> b53e3ef3f91713e1400b2019df214daf1a0c4c6a
                                 );
     protected:
         QColor    windArrowsColor;
@@ -146,7 +150,11 @@ class TableCell_Current : public TableCell
                                 double cx, double cy, bool south,
                                 GriddedPlotter  *plotter,
                                 QWidget *parent, QString txt, bool bold,
+<<<<<<< HEAD
                                 QColor bgcolor, bool showCurrentArrows
+=======
+                                QColor bgcolor
+>>>>>>> b53e3ef3f91713e1400b2019df214daf1a0c4c6a
                                 );
     protected:
         QColor    windArrowsColor;

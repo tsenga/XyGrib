@@ -40,6 +40,8 @@ void POI_TableWidget::createTable()
     int lig, col, colspan;
     QString dstr;
 
+    //bool showSunMoonAlmanac = Util::getSetting("MTABLE_showSunMoonAlmanac", true).toBool();
+
     // Section 1 - one top level column per day, columns for hours with days
 
     col = 0;
@@ -119,7 +121,8 @@ void POI_TableWidget::addLine_Wind (const Altitude &alt, double lon, double lat,
     QColor    bgColor = Qt::white;
     QString   txt;
     int col = 0;
-
+    //addCell_title_dataline (tr("Wind")+" ("+AltitudeStr::toStringShort(alt)+")",
+                    layout, lig,col);
     col ++;
     for (iter=lsdates.begin(); iter!=lsdates.end(); iter++, col++) {
         time_t curr_time = *iter;

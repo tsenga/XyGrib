@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Terrain.h"
 #include "MenuBar.h"
 #include "BoardPanel.h"
+#include "POI_Panel.h"
 #include "DateChooser.h"
 #include "ColorScaleWidget.h"
 
@@ -172,6 +173,7 @@ class MainWindow: public QMainWindow
         MenuBar      *menuBar;
         QToolBar     *toolBar;
         BoardPanel   *boardPanel;
+        POI_Panel    *poiPanel;
         QStatusBar   *statusBar;
 		DateChooser  *dateChooser;
 		ColorScaleWidget *colorScaleWidget;
