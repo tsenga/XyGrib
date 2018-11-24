@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QComboBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QTimer>
 
 #include "MainWindow.h"
 #include "MeteoTable.h"

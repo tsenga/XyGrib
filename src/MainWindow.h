@@ -173,7 +173,6 @@ class MainWindow: public QMainWindow
         MenuBar      *menuBar;
         QToolBar     *toolBar;
         BoardPanel   *boardPanel;
-        POI_Panel    *poiPanel;
         QStatusBar   *statusBar;
 		DateChooser  *dateChooser;
 		ColorScaleWidget *colorScaleWidget;

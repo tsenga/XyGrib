@@ -122,7 +122,7 @@ void POI_TableWidget::addLine_Wind (const Altitude &alt, double lon, double lat,
     QString   txt;
     int col = 0;
     //addCell_title_dataline (tr("Wind")+" ("+AltitudeStr::toStringShort(alt)+")",
-                    layout, lig,col);
+    //                layout, lig,col);
     col ++;
     for (iter=lsdates.begin(); iter!=lsdates.end(); iter++, col++) {
         time_t curr_time = *iter;

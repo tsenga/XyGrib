@@ -42,28 +42,6 @@ MeteoTableWidget::~MeteoTableWidget()
 	Util::cleanVectorPointers (lspinfos);
 	qDeleteAll (listVisibleData);
 }
-//----------------------------------------------------------------
-void MeteoTableWidget::addCell_SunMoonAlmanac (time_t t, double lat, double lon, 
-				QGridLayout *layout,int lig,int col, int rowspan,int colspan)
-{
-	TableCell *cell = new TableCell (this);	
-	assert (cell);
-	cell->setBorders (lig, col);
-	
-	Almanac alm = Astro::getSunMoonAlmanac (t, lat, lon);
-
-	QString rs,st;
-	QString txt;
-	rs = alm.sunRise>0 ? Util::formatTime (alm.sunRise) : "----";
-	st = alm.sunSet>0 ? Util::formatTime (alm.sunSet) : "----";
-	txt = "⇑ "+rs+" ⇓ "+st+"\n";
-	rs = alm.moonRise>0 ? Util::formatTime (alm.moonRise) : "----";
-	st = alm.moonSet>0 ? Util::formatTime (alm.moonSet) : "----";
-	txt += "⇑ "+rs+" ⇓ "+st;
-	txt += "  "+QString("%1%").arg( (int)(100*alm.moonDisk+0.5));
-	cell->label->setText (txt);
-	layout->setAlignment (Qt::AlignLeft);
-	layout->addWidget (cell, lig,col, rowspan,colspan );
 //-------------------------------------------------------------------------------
 bool MeteoTableWidget::showWindArrows()
 {
